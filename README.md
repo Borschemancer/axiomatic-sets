@@ -1,4 +1,4 @@
-# Axiomatic (ZF⁻) set theory
+# Axiomatic (ZF⁻-like) set theory
 
 ## Axioms
 

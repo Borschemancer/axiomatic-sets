@@ -350,6 +350,28 @@ sdif-empty
 
 --------------------------------------------------
 
+power-self-in
+ : ∀ {x}
+ → x ∈ (𝒫 x)
+power-self-in
+ = λ _ → triv
+
+power-empty-in
+ : ∀ {x}
+ → ∅ ∈ (𝒫 x)
+power-empty-in
+ = λ _ → exfalso
+
+power-empty-singl
+ : (𝒫 ∅) ≡ ⟨ ∅ ⟩
+power-empty-singl
+ = ext λ z
+ → (λ emp → inl (empty-eq emp))
+ * |> (λ { eq _ → triv })
+      exfalso
+
+--------------------------------------------------
+
 S : Ens → Ens
 S x = x · x
 
