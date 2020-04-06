@@ -2,32 +2,32 @@
 
 Extensionality:
 
-![](img/ext.png)
+<img src="img/ext.png" width="50%" >
 
 Adjunction:
 
-![](img/adj.png)
+<img src="img/adj.png" width="50%" >
 
 Union:
 
-![](img/uni.png)
+<img src="img/uni.png" width="50%" >
 
 Powerset:
 
-![](img/pow.png)
+<img src="img/pow.png" width="50%" >
 
 Empty set:
 
-![](img/emp.png)
+<img src="img/emp.png" width="50%" >
 
 Restricted comprehension:
 
-![](img/cmp.png)
+<img src="img/cmp.png" width="50%" >
 
 Replacement:
 
-![](img/rpl.png)
+<img src="img/rpl.png" width="50%" >
  
 and Infinity:
 
-![](img/omg.png)
+<img src="img/omg.png" width="50%" >
