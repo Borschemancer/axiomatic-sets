@@ -319,6 +319,22 @@ dif-int
  → *> (λ zx f → zx * λ zy → f (zx * zy))
  * *> (λ zx f → zx * *> (const f))
 
+int-dif-eq-dif
+ : ∀ {x y}
+ → (x ∩ (x - y)) ≡ (x - y)
+int-dif-eq-dif
+ = ext λ z
+ → *> (λ zx → *> λ _ nzy → zx * nzy)
+ * *> λ zx nzy → zx * zx * nzy
+
+dif-int-sec
+ : ∀ {x y}
+ → ((x - y) ∩ y) ≡ ∅
+dif-int-sec
+ = ext λ z
+ → *> (*> (const (flp exf-imp)))
+ * exfalso
+
 --------------------------------------------------
 
 _▲_ : Ens → Ens → Ens
