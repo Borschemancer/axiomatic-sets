@@ -38,7 +38,7 @@ record _&_ (A B : ∞ Prop) : Prop where
     fst : ♭ A
     snd : ♭ B
 
-open _&_
+open _&_ public
 
 _₁ = fst
 _₂ = snd
@@ -80,6 +80,9 @@ _∙_ f g = λ z → f (g z)
 infixr 0 _$_
 _$_ : {P Q : Prop} → (P → Q) → P → Q
 _$_ f p = f p
+
+flp : {P Q R : Prop} → (P → Q → R) → (Q → P → R)
+flp f q p = f p q
 
 exf-imp
  : ∀ {P Q}
@@ -126,31 +129,46 @@ cont-imp {P} {Q}
 --------------------------------------------------
 
 data _≡_ (x : Ens) : Ens → Prop where
-  equal : x ≡ x
-
-_≠_ : Ens → Ens → Prop
-_≠_ x y = ¬ (x ≡ y)
+  eq : x ≡ x
 
 e>
  : ∀ {x y}
  → x ≡ y
  → (∀ z → z ∈ x → z ∈ y)
-e> equal
+e> eq
  = λ z → triv
 
 ê>
  : ∀ {x y}
  → x ≡ y
  → (∀ z → x ∈ z → y ∈ z)
-ê> equal
+ê> eq
  = λ z → triv
 
-sym
+eq-sym
  : ∀ {x y}
  → x ≡ y
  → y ≡ x
-sym equal
- = equal 
+eq-sym eq
+ = eq
+
+eq-trans
+ : ∀ {x y z}
+ → x ≡ y
+ → y ≡ z
+ → x ≡ z
+eq-trans eq eq
+ = eq
+
+_≠_ : Ens → Ens → Prop
+_≠_ x y = ¬ (x ≡ y)
+
+neq-sym
+ : ∀ {x y}
+ → x ≠ y
+ → y ≠ x
+neq-sym xney
+ = flp exf-imp xney ∙ eq-sym
 
 --------------------------------------------------
 
@@ -189,3 +207,5 @@ uniq p = ∀ x y → p x → p y → x ≡ y
 _from_ : Prop → Prop → Prop₁
 _from_ P Q = {T : Prop} → (P → T) → (Q → T)
 
+_to_ : Prop → Prop → Prop
+_to_ P Q = P → Q
