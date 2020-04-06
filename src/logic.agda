@@ -35,13 +35,13 @@ data _∨_ (A B : Prop) : Prop where
 record _&_ (A B : ∞ Prop) : Prop where
   constructor _*_
   field
-    fst : ♭ A
-    snd : ♭ B
+    prj₁ : ♭ A
+    prj₂ : ♭ B
 
 open _&_ public
 
-_₁ = fst
-_₂ = snd
+_₁ = prj₁
+_₂ = prj₂
 
 _∧_ : Prop → Prop → Prop
 _∧_ A B = (♯ A) & (♯ B)
@@ -173,6 +173,8 @@ neq-sym xney
 --------------------------------------------------
 
 infixr 3 _#_
+
+-- # is used because of syntactic conflict with pair ⟨_,_⟩ notation
 
 data ∃ (p : Ens → Prop) : Prop where
  _#_ : (x : Ens) → p x → ∃ p

@@ -112,7 +112,7 @@ psub-sub
  → x ⊂ y
  → x ⊆ y
 psub-sub
- = fst
+ = prj₁
 
 --------------------------------------------------
 
@@ -340,4 +340,26 @@ dif-int-sec
 _▲_ : Ens → Ens → Ens
 _▲_ x y = (x - y) ∪ (y - x)
 
+sdif-empty
+ : ∀ {x}
+ → (x ▲ ∅) ≡ x
+sdif-empty
+ = ext λ z
+ → ∪> (|> prj₁ (*> exfalso))
+ * λ zx → ∪[] (inl (zx * triv))
+
 --------------------------------------------------
+
+S : Ens → Ens
+S x = x · x
+
+succ-eq-uni-singl
+ : ∀ {x}
+ → (S x) ≡ (x ∪ ⟨ x ⟩)
+succ-eq-uni-singl
+ = ext λ z
+ → |> (λ { eq → ∪[] (inr (inl eq)) })
+      (λ zx → ∪[] (inl zx))
+ * ∪> (|> inr (|> inl exfalso))
+
+
