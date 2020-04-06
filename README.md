@@ -1,37 +1,37 @@
 # Axiomatic (ZF⁻-like) set theory
 
-## Axioms
+### Axioms
 
-### Extensionality
+**Extensionality**
 
-<img src="img/ext.png" height="23">
+<img src="img/ext.png" height="20">
 
-### Adjunction
+**Adjunction**
 
-<img src="img/adj.png" height="25">
+<img src="img/adj.png" height="21">
 
-### Union
+**Union**
 
-<img src="img/uni.png" height="32">
+<img src="img/uni.png" height="27">
 
-### Powerset
+**Powerset**
 
-<img src="img/pow.png" height="25">
+<img src="img/pow.png" height="21">
 
-### Empty set
+**Empty set**
 
-<img src="img/emp.png" height="23">
+<img src="img/emp.png" height="19">
 
-### Restricted comprehension
+**Restricted comprehension**
 
-<img src="img/cmp.png" height="25">
+<img src="img/cmp.png" height="21">
 
-### Replacement
+**Replacement**
 
-<img src="img/rpl.png" height="25">
+<img src="img/rpl.png" height="21">
  
-### and Infinity
+**and Infinity**
 
-<img src="img/omg.png" height="25">
+<img src="img/omg.png" height="21">
 
-**Some of these axioms may almost be derived from the others, but they are included for the sake of convenience.**
+Some of these axioms may almost be derived from the others, but they are included for the sake of convenience.

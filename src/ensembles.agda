@@ -249,14 +249,14 @@ inter-sub
  → (x ∩ y) ⊆ x
 inter-sub
  = λ z
- → *> const
+ → prj₁
 
 inter-self
  : ∀ {x}
  → (x ∩ x) ≡ x
 inter-self
  = ext λ z
- → *> const
+ → prj₁
  * λ zx → zx * zx
 
 inter-empty
