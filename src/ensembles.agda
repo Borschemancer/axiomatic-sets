@@ -58,11 +58,11 @@ sub-empty xso
  = empty-eq xso
 
 sub-trans
- : ∀ x y z
+ : ∀ {x y z}
  → x ⊆ y
  → y ⊆ z
  → x ⊆ z
-sub-trans x y z xsy ysz
+sub-trans xsy ysz
  = λ u ux
  → ysz u (xsy u ux)
 
@@ -94,16 +94,17 @@ not-psub-sym
  → *> λ ysx
  → exf-imp (ext′ ysx xsy)
 
-{- TODO
 psub-trans
- : ∀ x y z
+ : ∀ {x y z}
  → x ⊂ y
  → y ⊂ z
  → x ⊂ z
-psub-trans x y z
- = ?
--}
-
+psub-trans {x} {y} {z}
+ = *> λ xsy xney
+ → *> λ ysz ynez
+ → sub-trans {x = x} {y = y} {z = z} xsy ysz
+ * λ { eq → exf-imp (ext′ xsy ysz) xney }
+ 
 psub-sub
  : ∀ {x y}
  → x ⊂ y
@@ -314,14 +315,14 @@ inter-empty
  → *> (const triv)
  * exfalso
 
-{- TODO
 inter-sub-eq
  : ∀ {x y}
  → (x ⊆ y) ↔ ((x ∩ y) ≡ x)
-inter-sub-eq
- = {!!}
- * {!!}
--}
+inter-sub-eq {x} {y}
+ = (λ xsy
+ → ext′ (inter-sub {x = x} {y = y})
+        (λ u ux → ux * xsy u ux))
+ * (λ e u → prj₂ ∙ (e> (eq-sym e) u))
 
 distr-int-uni
  : ∀ {x y z}
@@ -503,16 +504,6 @@ ope> f = pe>
                ∙ eq-sym)
                ∙ singl-pair-eq)))
 
-{- TODO
-opair-power
- : ∀ {x y z}
- → x ∈ z
- → y ∈ z
- → [ x , y ] ∈ (𝒫 z)
-opair-power xz yz
- = ?
--}
-
 opair-eq-singl-singl
  : ∀ {x y}
  → x ≡ y
@@ -527,6 +518,23 @@ opair-eq-singl-singl {x} eq
    ⟨ ⟨ x ⟩ , ⟨ x , x ⟩ ⟩
    ∎
 
+opair-eq-comm
+ : ∀ {x y}
+ → [ x , y ] ≡ [ y , x ]
+ → x ≡ y
+opair-eq-comm
+ = ope> prj₁
+
+{- TODO
+opair-power
+ : ∀ {x y z}
+ → x ∈ z
+ → y ∈ z
+ → [ x , y ] ∈ (𝒫 z)
+opair-power {x} {y} {z} xz yz
+ = ?
+-}
+
 --------------------------------------------------
 
 S : Ens → Ens
@@ -540,5 +548,3 @@ succ-eq-uni-singl
  → |> (λ { eq → ∪[] (inr (inl eq)) })
       (λ zx → ∪[] (inl zx))
  * ∪> (|> inr (|> inl exfalso))
-
-
