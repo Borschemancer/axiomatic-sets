@@ -101,10 +101,7 @@ psub-trans
  → y ⊂ z
  → x ⊂ z
 psub-trans x y z
- = *> λ xsy xney
- → *> λ xsz ynez
- → sub-trans x y z xsy xsz
- * λ xez → {!!}
+ = ?
 -}
 
 psub-sub
@@ -441,9 +438,7 @@ dif-int-uni-dif
  : ∀ {x y z}
  → (x - (y ∩ z)) ≡ ((x - y) ∪ (x - z))
 dif-int-uni-dif
- = ext λ z
- → *> (λ zx nyuz → ∪[] (inl (zx * {!!})))
- * {!!}
+ = ?
 -}
 
 --------------------------------------------------
@@ -507,6 +502,16 @@ ope> f = pe>
                ∙ singl-pair-eq)
                ∙ eq-sym)
                ∙ singl-pair-eq)))
+
+{- TODO
+opair-power
+ : ∀ {x y z}
+ → x ∈ z
+ → y ∈ z
+ → [ x , y ] ∈ (𝒫 z)
+opair-power xz yz
+ = ?
+-}
 
 opair-eq-singl-singl
  : ∀ {x y}
