@@ -116,6 +116,29 @@ psub-sub
 
 --------------------------------------------------
 
+⟨_,_⟩ : Ens → Ens → Ens
+⟨_,_⟩ x y = x · y · ∅
+
+pe>
+ : ∀ {x y u v}
+ → ((x ≡ u) ∧ (y ≡ v) ∨ (x ≡ v) ∧ (y ≡ u)) from (⟨ x , y ⟩ ≡ ⟨ u , v ⟩)
+pe> {x} {y} {u} {v} {T} f e
+ with
+    (e> e x (inl eq))
+  | (e> e y (inr (inl eq)))
+… | inl eq | inl eq =
+  let e′ = (e> (eq-sym e) v (inr (inl eq)))
+      f′ vex = f (inl (eq * eq-sym vex)) in
+      |> f′ (|> f′ exfalso) e′
+… | inl xeu | inr (inl yev) = f (inl (xeu * yev))
+… | inr (inl xev) | inl yeu = f (inr (xev * yeu))
+… | inr (inl eq)  | inr (inl eq) =
+  let e′ = e> (eq-sym e) u (inl eq)
+      f′ uex = f (inr (eq * (eq-sym uex))) in
+      |> f′ (|> f′ exfalso) e′
+
+--------------------------------------------------
+
 ⟨_⟩ : Ens → Ens
 ⟨_⟩ x = x · ∅
 
@@ -142,10 +165,21 @@ singl-union {a}
  → #> (λ x → *> (|> (λ { eq → triv }) exfalso))
  * λ za → a # inl eq * za
 
---------------------------------------------------
+singl-self-pair-eq
+ : ∀ {x}
+ → ⟨ x ⟩ ≡ ⟨ x , x ⟩
+singl-self-pair-eq
+ = ext λ z
+ → |> inl exfalso
+ * |> inl (|> inl exfalso)
 
-⟨_,_⟩ : Ens → Ens → Ens
-⟨_,_⟩ x y = x · y · ∅
+singl-pair-eq
+ : ∀ {x y z}
+ → ⟨ x ⟩ ≡ ⟨ y , z ⟩
+ → (x ≡ y) ∧ (x ≡ z)
+singl-pair-eq {x} e
+ = pe> (|> triv (*> λ xez xey → xey * xez))
+ $ eq-trans (eq-sym singl-self-pair-eq) e
 
 --------------------------------------------------
 
@@ -155,9 +189,10 @@ _∪_ x y = ∐ ⟨ x , y ⟩
 ∪>
  : ∀ {x y z}
  → ((z ∈ x) ∨ (z ∈ y)) from (z ∈ (x ∪ y))
-∪> f = #> λ u
-     → *> (|> (λ { eq zx → f (inl zx) })
-          (|> (λ { eq zy → f (inr zy) }) exfalso))
+∪> f
+ = #> λ u
+ → *> (|> (λ { eq zx → f (inl zx) })
+      (|> (λ { eq zy → f (inr zy) }) exfalso))
 
 ∪[]
  : ∀ {x y z}
@@ -202,14 +237,21 @@ union-empty
  → ∪> (|> triv exfalso)
  * ∪[] ∙ inl
 
-union-sub
+sub-sub-uni
  : ∀ {x y z}
  → x ⊆ z
  → y ⊆ z
  → (x ∪ y) ⊆ z
-union-sub xsz ysz
- = λ u
- → ∪> (|> (xsz u) (ysz u))
+sub-sub-uni xsz ysz
+ = λ u → ∪> (|> (xsz u) (ysz u))
+
+not-uni-not
+ : ∀ {x y z}
+ → (z ∉ (x ∪ y))
+ → (z ∉ x) ∧ (z ∉ y)
+not-uni-not nzxuy
+ = (λ zx → exf-imp (∪[] (inl zx)) nzxuy)
+ * (λ zy → exf-imp (∪[] (inr zy)) nzxuy)
 
 --------------------------------------------------
 
@@ -298,42 +340,103 @@ distr-uni-int
               (λ uz → ∪> (|> (λ uy → ∪[] (inr uz))
                              (λ uz → ∪[] (inr uz))))))
 
+not-int-comm-not
+ : ∀ {x y z}
+ → (z ∉ (x ∩ y))
+ → (z ∉ (y ∩ x))
+not-int-comm-not nzxiy
+ = *> λ zy zx
+ → exf-imp (zx * zy) nzxiy
+
+not-int-not-imp
+ : ∀ {x y z}
+ → (z ∉ (x ∩ y))
+ → (z ∈ y)
+ → (z ∉ x)
+not-int-not-imp nzxiy zy
+ = λ zx → exf-imp (zx * zy) nzxiy
+
+{- TODO
+not-int-not
+ : ∀ {x y z}
+ → (z ∉ (x ∩ y))
+ → (z ∉ x) ∧ (z ∉ y)
+not-int-not {x} {y} {z} nzxiy
+ = ?
+-}
+
 --------------------------------------------------
 
 _-_ : Ens → Ens → Ens
 _-_ x y = ⟨ v ∈ x ∣ v ∉ y ⟩
 
-dif-self
+dif-self-empty
  : ∀ {x}
  → (x - x) ≡ ∅
-dif-self
+dif-self-empty
  = ext λ z
  → *> exf-imp
  * exfalso
 
-dif-int
+dif-int-dif
  : ∀ {x y}
  → (x - (x ∩ y)) ≡ (x - y)
-dif-int
+dif-int-dif
  = ext λ z
  → *> (λ zx f → zx * λ zy → f (zx * zy))
  * *> (λ zx f → zx * *> (const f))
 
-int-dif-eq-dif
+int-dif-dif
  : ∀ {x y}
  → (x ∩ (x - y)) ≡ (x - y)
-int-dif-eq-dif
+int-dif-dif
  = ext λ z
  → *> (λ zx → *> λ _ nzy → zx * nzy)
  * *> λ zx nzy → zx * zx * nzy
 
-dif-int-sec
+uni-dif-uni
+ : ∀ {x y}
+ → ((x - y) ∪ y) ≡ (x ∪ y)
+uni-dif-uni {x} {y}
+ = ext λ z
+ → ∪> (|> (*> (flp (const (∪[] ∙ inl))))
+          (∪[] ∙ inr))
+ * ∪> (|> (∪[] ∙ (z ∈ y) ⁇ flp (const inr) ∷ λ nzy zx → inl (zx * nzy))
+          (∪[] ∙ inr))
+
+uni-dif-dif
+ : ∀ {x y}
+ → ((x ∪ y) - y) ≡ (x - y)
+uni-dif-dif
+ = ext λ z
+ → *> (∪> (|> (λ zx nzy → zx * nzy) exf-imp))
+ * *> λ zx nzy → ∪[] (inl zx) * nzy
+
+dif-int-empty
  : ∀ {x y}
  → ((x - y) ∩ y) ≡ ∅
-dif-int-sec
+dif-int-empty
  = ext λ z
  → *> (*> (const (flp exf-imp)))
  * exfalso
+
+dif-uni-uni-dif
+ : ∀ {x y z}
+ → (x - (y ∪ z)) ≡ ((x - y) ∩ (x - z))
+dif-uni-uni-dif
+ = ext λ u
+ → *> (λ ux nyuz → (ux * not-uni-not nyuz ₁) * ux * (not-uni-not nyuz ₂))
+ * *> (*> λ uz nuy → *> λ ux nuz → ux * ∪> (|> nuy nuz))
+
+{- TODO
+dif-int-uni-dif
+ : ∀ {x y z}
+ → (x - (y ∩ z)) ≡ ((x - y) ∪ (x - z))
+dif-int-uni-dif
+ = ext λ z
+ → *> (λ zx nyuz → ∪[] (inl (zx * {!!})))
+ * {!!}
+-}
 
 --------------------------------------------------
 
@@ -347,6 +450,16 @@ sdif-empty
  = ext λ z
  → ∪> (|> prj₁ (*> exfalso))
  * λ zx → ∪[] (inl (zx * triv))
+
+sdif-comm
+ : ∀ {x y}
+ → (x ▲ y) ≡ (y ▲ x)
+sdif-comm
+ = ext λ z
+ → ∪> (|> (*> λ zx nzy → ∪[] (inr (zx * nzy)))
+          (*> λ zy nzx → ∪[] (inl (zy * nzx))))
+ * ∪> (|> (*> λ zy nzx → ∪[] (inr (zy * nzx)))
+          (*> λ zx nzy → ∪[] (inl (zx * nzy))))
 
 --------------------------------------------------
 
@@ -369,6 +482,23 @@ power-empty-singl
  → (λ emp → inl (empty-eq emp))
  * |> (λ { eq _ → triv })
       exfalso
+
+--------------------------------------------------
+
+[_,_] : Ens → Ens → Ens
+[_,_] x y = ⟨ ⟨ x ⟩ , ⟨ x , y ⟩ ⟩
+
+ope>
+ : ∀ {x y u v}
+ → ((x ≡ u) ∧ (y ≡ v)) from ([ x , y ] ≡ [ u , v ])
+ope> f = pe>
+   (|> (*> ((λ { eq → pe>
+            (|> f (*> λ { eq yx → f (eq * yx) })) })
+               ∙ singl-inj))
+       (*> (flp ((*> (λ { eq eq → f })
+               ∙ singl-pair-eq)
+               ∙ eq-sym)
+               ∙ singl-pair-eq)))
 
 --------------------------------------------------
 
