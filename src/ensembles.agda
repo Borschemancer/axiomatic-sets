@@ -259,6 +259,50 @@ not-uni-not nzxuy
  = (λ zx → exf-imp (∪[] (inl zx)) nzxuy)
  * (λ zy → exf-imp (∪[] (inr zy)) nzxuy)
 
+uni-adj-eq
+ : ∀ {x y}
+ → (⟨ x ⟩ ∪ (x · y)) ≡ (x · y)
+uni-adj-eq
+ = ext λ z
+ → ∪> (|> (|> inl exfalso) triv)
+ * |> (∪[] ∙ inl ∙ inl) (∪[] ∙ inr ∙ inr)
+
+arb-uni-emp
+ : ∐ ∅ ≡ ∅
+arb-uni-emp
+ = ext λ z
+ → #> (λ _ → prj₁)
+ * exfalso
+
+arb-uni-uni
+ : ∀ {x y}
+ → ∐ (x ∪ y) ≡ ((∐ x) ∪ (∐ y))
+arb-uni-uni {x} {y}
+ = ext λ z
+ → #> (λ w
+ → *> (∪> (|> (λ wx zw → ∪[] (inl (w # wx * zw)))
+              (λ wy zw → ∪[] (inr (w # wy * zw))))))
+ * ∪> (|> (#> λ w → *> λ wx zw → w # ∪[] (inl wx) * zw)
+          (#> λ w → *> λ wy zw → w # ∪[] (inr wy) * zw ))
+
+arb-uni-sub
+ : ∀ {x y}
+ → x ⊆ y
+ → (∐ x) ⊆ (∐ y)
+arb-uni-sub xsy
+ = λ z
+ → #> λ w
+ → *> λ wx zw
+ → w # xsy w wx * zw
+
+arb-uni-in-sub
+ : ∀ {x y}
+ → x ∈ y
+ → x ⊆ (∐ y)
+arb-uni-in-sub {x} xy
+ = λ z zx
+ → x # xy * zx
+
 --------------------------------------------------
 
 ∏ : Ens → Ens
@@ -370,6 +414,13 @@ not-int-not
 not-int-not {x} {y} {z} nzxiy
  = ?
 -}
+
+arb-int-empty
+ : ∏ ∅ ≡ ∅
+arb-int-empty
+ = ext λ z
+ → *> (#> λ _ → const ∙ prj₁)
+ * exfalso
 
 --------------------------------------------------
 
@@ -525,15 +576,17 @@ opair-eq-comm
 opair-eq-comm
  = ope> prj₁
 
-{- TODO
-opair-power
- : ∀ {x y z}
- → x ∈ z
- → y ∈ z
- → [ x , y ] ∈ (𝒫 z)
-opair-power {x} {y} {z} xz yz
- = ?
--}
+opair-arb-uni
+ : ∀ {x y}
+ → ∐ [ x , y ] ≡ ⟨ x , y ⟩
+opair-arb-uni {x} {y}
+ = uni-adj-eq
+
+opair-arb-uni-double
+ : ∀ {x y}
+ → ∐ (∐ [ x , y ]) ≡ (x ∪ y)
+opair-arb-uni-double {x} {y}
+ = ∐ $≡ uni-adj-eq
 
 --------------------------------------------------
 

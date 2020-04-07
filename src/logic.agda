@@ -162,6 +162,9 @@ neq-sym
 neq-sym xney
  = flp exf-imp xney ∙ eq-sym
 
+_$≡_ : ∀ {x y} (φ : Ens → Ens) → x ≡ y → (φ x) ≡ (φ y)
+_$≡_ φ eq = eq
+
 infix  1 begin_
 infixr 2 _≡⟨_⟩_
 infix  3 _∎
