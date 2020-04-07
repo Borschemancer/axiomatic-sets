@@ -137,6 +137,14 @@ pe> {x} {y} {u} {v} {T} f e
       f′ uex = f (inr (eq * (eq-sym uex))) in
       |> f′ (|> f′ exfalso) e′
 
+pair-eq
+ : ∀ {x y u v}
+ → x ≡ u
+ → y ≡ v
+ → ⟨ x , y ⟩ ≡ ⟨ u , v ⟩
+pair-eq eq eq
+ = eq
+
 --------------------------------------------------
 
 ⟨_⟩ : Ens → Ens
@@ -499,6 +507,20 @@ ope> f = pe>
                ∙ singl-pair-eq)
                ∙ eq-sym)
                ∙ singl-pair-eq)))
+
+opair-eq-singl-singl
+ : ∀ {x y}
+ → x ≡ y
+ → [ x , y ] ≡ ⟨ ⟨ x ⟩ ⟩
+opair-eq-singl-singl {x} eq
+ = eq-sym
+ $ begin
+   ⟨ ⟨ x ⟩ ⟩
+   ≡⟨ singl-self-pair-eq ⟩
+   ⟨ ⟨ x ⟩ , ⟨ x ⟩ ⟩
+   ≡⟨ pair-eq eq singl-self-pair-eq ⟩
+   ⟨ ⟨ x ⟩ , ⟨ x , x ⟩ ⟩
+   ∎
 
 --------------------------------------------------
 

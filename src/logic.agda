@@ -152,14 +152,6 @@ eq-sym
 eq-sym eq
  = eq
 
-eq-trans
- : ∀ {x y z}
- → x ≡ y
- → y ≡ z
- → x ≡ z
-eq-trans eq eq
- = eq
-
 _≠_ : Ens → Ens → Prop
 _≠_ x y = ¬ (x ≡ y)
 
@@ -169,6 +161,33 @@ neq-sym
  → y ≠ x
 neq-sym xney
  = flp exf-imp xney ∙ eq-sym
+
+infix  1 begin_
+infixr 2 _≡⟨_⟩_
+infix  3 _∎
+
+begin_ : ∀ {x y} → x ≡ y → x ≡ y
+begin_ p = p
+
+_≡⟨_⟩_ : ∀ x {y z} → x ≡ y → y ≡ z → x ≡ z
+_≡⟨_⟩_ x eq q = q
+
+_∎ : ∀ x → x ≡ x
+_∎ x = eq
+
+eq-trans
+ : ∀ {x y z}
+ → x ≡ y
+ → y ≡ z
+ → x ≡ z
+eq-trans {x} {y} {z} p q
+ = begin
+    x
+   ≡⟨ p ⟩
+    y
+   ≡⟨ q ⟩
+    z
+   ∎
 
 --------------------------------------------------
 
