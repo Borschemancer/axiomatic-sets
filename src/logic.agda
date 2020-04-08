@@ -231,5 +231,17 @@ uniq p = ∀ x y → p x → p y → x ≡ y
 _from_ : Prop → Prop → Prop₁
 _from_ P Q = {T : Prop} → (P → T) → (Q → T)
 
+≡>
+ : ∀ {x y}
+ → x ≡ y
+ → ∀ {z} → (z ∈ y) from (z ∈ x)
+≡> eq = triv
+
+iff> 
+ : ∀ {P Q}
+ → P ↔ Q
+ → P from Q
+iff> (pq * qp) f q = f (qp q)
+
 _to_ : Prop → Prop → Prop
 _to_ P Q = P → Q

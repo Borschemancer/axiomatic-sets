@@ -135,13 +135,21 @@ pe> {x} {y} {u} {v} {T} f e
       f′ uex = f (inr (eq * (eq-sym uex))) in
       |> f′ (|> f′ exfalso) e′
 
-pair-eq
+pair-comm
+ : ∀ {x y}
+ → ⟨ x , y ⟩ ≡ ⟨ y , x ⟩
+pair-comm
+ = ext λ z
+ → |> (inr ∙ inl) (|> inl exfalso)
+ * |> (inr ∙ inl) (|> inl exfalso)
+
+pair-eq-eqv
  : ∀ {x y u v}
- → x ≡ u
- → y ≡ v
- → ⟨ x , y ⟩ ≡ ⟨ u , v ⟩
-pair-eq eq eq
- = eq
+ → (⟨ x , y ⟩ ≡ ⟨ u , v ⟩) ↔ ((x ≡ u) ∧ (y ≡ v) ∨ (x ≡ v) ∧ (y ≡ u))
+pair-eq-eqv
+ = pe> triv
+ * |> (*> λ { eq eq → eq })
+      (*> λ { eq eq → pair-comm })
 
 --------------------------------------------------
 
@@ -192,20 +200,24 @@ singl-pair-eq {x} e
 _∪_ : Ens → Ens → Ens
 _∪_ x y = ∐ ⟨ x , y ⟩
 
+union-or-eqv
+ : ∀ {x y z}
+ → ((z ∈ x) ∨ (z ∈ y)) ↔ (z ∈ (x ∪ y))
+union-or-eqv {x} {y}
+ = |> (λ zx → x # inl eq * zx)
+      (λ zy → y # inr (inl eq) * zy)
+ * #> λ w → *> (|> (λ { eq → inl })
+               (|> (λ { eq → inr }) exfalso))
+
 ∪>
  : ∀ {x y z}
  → ((z ∈ x) ∨ (z ∈ y)) from (z ∈ (x ∪ y))
-∪> f
- = #> λ u
- → *> (|> (λ { eq zx → f (inl zx) })
-      (|> (λ { eq zy → f (inr zy) }) exfalso))
+∪> = iff> union-or-eqv
 
 ∪[]
  : ∀ {x y z}
- → ((z ∈ x) ∨ (z ∈ y)) to (z ∈ (x ∪ y))
-∪[] {x} {y}
-  = |> (λ zx → x # inl eq * zx)
-       (λ zy → y # inr (inl eq) * zy)
+ → ((z ∈ x) ∨ (z ∈ y)) → (z ∈ (x ∪ y))
+∪[] = union-or-eqv ₁
 
 union-comm
  : ∀ {x y}
@@ -303,6 +315,11 @@ arb-uni-in-sub {x} xy
  = λ z zx
  → x # xy * zx
 
+∐fam : (Ens → Ens) → Ens → Ens
+∐fam φ x = ⟨ u ∈ ∐ x ↦ φ u ⟩
+
+syntax ∐fam (λ x → body) a = ∐ x ∈ a ∣ body
+
 --------------------------------------------------
 
 ∏ : Ens → Ens
@@ -311,14 +328,16 @@ arb-uni-in-sub {x} xy
 _∩_ : Ens → Ens → Ens
 _∩_ x y = ⟨ u ∈ x ∣ u ∈ y ⟩
 
-∩>
+int-prod-pair
  : ∀ {x y z}
- → (z ∈ (x ∩ y)) from (z ∈ ∏ ⟨ x , y ⟩)
-∩> {x} {y} {z} f
- = *> (#> λ u
- → *> (|> (λ { eq zx g → f (zx * g y (inr (inl eq))) })
-      (|> (λ { eq zy g → f (g x (inl eq) * zy) })
-          exfalso)))
+ → (z ∈ (x ∩ y)) ↔ (z ∈ ∏ ⟨ x , y ⟩)
+int-prod-pair {x} {y}
+ = *> (λ zx zy
+   → ∪[] (inl zx) * λ v
+   → |> (λ { eq → zx })
+    (|> (λ { eq → zy }) exfalso))
+ * *> (∪> (|> (λ zx f → zx * f y (inr (inl eq)))
+              (λ zy f → f x (inl eq) * zy)))
 
 inter-comm
  : ∀ {x y}
@@ -421,6 +440,24 @@ arb-int-empty
  = ext λ z
  → *> (#> λ _ → const ∙ prj₁)
  * exfalso
+
+arb-int-singl
+ : ∀ {x}
+ → ∏ ⟨ x ⟩ ≡ x
+arb-int-singl {x}
+ = ext λ z
+ → *> (#> λ w → *> (|> (λ { eq → const }) exfalso))
+ * λ zx → (x # inl eq * zx)
+   * λ v → |> (λ { eq → zx }) exfalso
+
+arb-union-pair
+ : ∀ {x y}
+ → ∏ ⟨ x , y ⟩ ≡ (x ∩ y)
+arb-union-pair {x} {y}
+ = ext λ z
+ → iff> int-prod-pair triv
+ * *> λ zx zy → (x # inl eq * zx)
+   * λ v → |> (λ { eq → zx }) (|> (λ { eq → zy }) exfalso)
 
 --------------------------------------------------
 
@@ -555,6 +592,13 @@ ope> f = pe>
                ∙ eq-sym)
                ∙ singl-pair-eq)))
 
+opair-eq-eqv
+ : ∀ {x y u v}
+ → ((x ≡ u) ∧ (y ≡ v)) ↔ ([ x , y ] ≡ [ u , v ])
+opair-eq-eqv
+ = *> (λ { eq eq → eq })
+ * ope> triv
+
 opair-eq-singl-singl
  : ∀ {x y}
  → x ≡ y
@@ -565,7 +609,7 @@ opair-eq-singl-singl {x} eq
    ⟨ ⟨ x ⟩ ⟩
    ≡⟨ singl-self-pair-eq ⟩
    ⟨ ⟨ x ⟩ , ⟨ x ⟩ ⟩
-   ≡⟨ pair-eq eq singl-self-pair-eq ⟩
+   ≡⟨ (λ v → ⟨ ⟨ x ⟩ , v ⟩) $≡ singl-self-pair-eq ⟩
    ⟨ ⟨ x ⟩ , ⟨ x , x ⟩ ⟩
    ∎
 
@@ -579,14 +623,43 @@ opair-eq-comm
 opair-arb-uni
  : ∀ {x y}
  → ∐ [ x , y ] ≡ ⟨ x , y ⟩
-opair-arb-uni {x} {y}
+opair-arb-uni
  = uni-adj-eq
 
 opair-arb-uni-double
  : ∀ {x y}
  → ∐ (∐ [ x , y ]) ≡ (x ∪ y)
-opair-arb-uni-double {x} {y}
+opair-arb-uni-double 
  = ∐ $≡ uni-adj-eq
+
+opair-arb-int
+ : ∀ {x y}
+ → ∏ [ x , y ] ≡ ⟨ x ⟩
+opair-arb-int {x}
+ = ext λ z
+ → *> (≡> uni-adj-eq
+      (|> (λ { eq → const (inl eq) })
+          (|> (λ zet f → inl (|> triv exfalso $ (f ⟨ x ⟩ (inl eq)))) exfalso)))
+ * |> (λ { eq → ∪[] (inl (inl eq)) * λ v →
+   |> (λ { eq → inl eq })
+  (|> (λ { eq → inl eq })
+   exfalso)})
+   exfalso
+
+π₁ : Ens → Ens
+π₁ x = ∏ (∏ x)
+
+opair-first
+ : ∀ {x y}
+ → π₁ [ x , y ] ≡ x
+opair-first {x} {y}
+ = begin
+   ∏ (∏ [ x , y ])
+   ≡⟨ ∏ $≡ opair-arb-int ⟩
+   ∏ ⟨ x ⟩
+   ≡⟨ arb-int-singl ⟩
+   x
+   ∎
 
 --------------------------------------------------
 
