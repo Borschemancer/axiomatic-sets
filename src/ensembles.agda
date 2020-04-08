@@ -320,14 +320,31 @@ arb-uni-in-sub {x} xy
 
 syntax ∐fam (λ x → body) a = ∐ x ∈ a ∣ body
 
-{- TODO
 uni-fam-eqv
  : ∀ {x z} {φ : Ens → Ens}
- → (z ∈ ∐ u ∈ x ∣ φ u) ↔ (∃ λ u → (u ∈ x) ∧ (z ∈ (φ u)))
-uni-fam-eqv
- = ?
- -}
- 
+ → (∃ λ u → (u ∈ x) ∧ (z ∈ (φ u))) ↔ (z ∈ ∐ u ∈ x ∣ φ u)
+uni-fam-eqv {x} {z} {φ}
+ = #> (λ w → *> λ wx zφw → φ w # (w # wx * eq) * zφw)
+ * #> (λ w → *> (#> λ v → *> λ { vx eq zφv → v # vx * zφv }))
+
+∪ᶠ>
+ : ∀ x {z} {φ : Ens → Ens}
+ → (∃ λ u → (u ∈ x) ∧ (z ∈ (φ u))) from (z ∈ ∐ u ∈ x ∣ φ u) 
+∪ᶠ> x = iff> (uni-fam-eqv {x = x})
+
+∪ᶠ[]
+ : ∀ x {z} {φ : Ens → Ens}
+ → (∃ λ u → (u ∈ x) ∧ (z ∈ (φ u))) → (z ∈ ∐ u ∈ x ∣ φ u)
+∪ᶠ[] x = (uni-fam-eqv {x = x}) ₁
+
+uni-fam-triv
+ : ∀ {x}
+ → (∐ u ∈ x ∣ u) ≡ (∐ x)
+uni-fam-triv {x}
+ = ext λ z
+ → ∪ᶠ> x triv
+ * #> λ w → *> λ wx zw → ∪ᶠ[] x (w # wx * zw)
+
 --------------------------------------------------
 
 ∏ : Ens → Ens
@@ -471,6 +488,16 @@ arb-union-pair {x} {y}
 ∏fam φ x = ∏ ⟨ u ∈ x ↦ φ u ⟩
 
 syntax ∏fam (λ x → body) a = ∏ x ∈ a ∣ body
+
+{- TODO
+uni-fam-int-uni
+ : ∀ {x y}
+ → (x ∩ (∐ y)) ≡ (∐ u ∈ y ∣ (x ∩ u))
+uni-fam-int-uni {x} {y}
+ = ext λ z
+ → *> (λ zx → #> λ w → *> λ wy zw → ∪ᶠ[] y (w # wy * zx * zw))
+ * {!!}
+-}
 
 --------------------------------------------------
 
