@@ -315,10 +315,12 @@ arb-uni-in-sub {x} xy
  = λ z zx
  → x # xy * zx
 
+{- TODO
 ∐fam : (Ens → Ens) → Ens → Ens
 ∐fam φ x = ⟨ u ∈ ∐ x ↦ φ u ⟩
 
 syntax ∐fam (λ x → body) a = ∐ x ∈ a ∣ body
+-}
 
 --------------------------------------------------
 
@@ -646,13 +648,10 @@ opair-arb-int {x}
    exfalso)})
    exfalso
 
-π₁ : Ens → Ens
-π₁ x = ∏ (∏ x)
-
-opair-first
+arb-int-double-opair
  : ∀ {x y}
- → π₁ [ x , y ] ≡ x
-opair-first {x} {y}
+ → ∏ (∏ [ x , y ]) ≡ x
+arb-int-double-opair {x} {y}
  = begin
    ∏ (∏ [ x , y ])
    ≡⟨ ∏ $≡ opair-arb-int ⟩
@@ -660,6 +659,12 @@ opair-first {x} {y}
    ≡⟨ arb-int-singl ⟩
    x
    ∎
+
+π₁ : Ens → Ens
+π₁ x = ∏ (∐ x)
+
+π₂ : Ens → Ens
+π₂ x = ∐ (⟨ u ∈ ∐ x ∣ (∐ x ≠ ∏ x → u ∉ ∏ x) ⟩)
 
 --------------------------------------------------
 
