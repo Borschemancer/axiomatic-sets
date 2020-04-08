@@ -494,8 +494,6 @@ uni-fam-int-uni
  : ∀ {x y}
  → (x ∩ (∐ y)) ≡ (∐ u ∈ y ∣ (x ∩ u))
 uni-fam-int-uni {x} {y}
- → *> (λ zx → #> λ w → *> λ wy zw → ∪ᶠ[] y (w # wy * zx * zw))
- * {!!}
  = ?
 -}
 
