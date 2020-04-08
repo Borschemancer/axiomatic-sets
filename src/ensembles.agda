@@ -171,10 +171,10 @@ singl-inj {a} e
  = |> triv exfalso
  $ e> e a (inl eq)
 
-singl-union
+arb-uni-singl
  : ∀ {a}
  → ∐ ⟨ a ⟩ ≡ a
-singl-union {a}
+arb-uni-singl {a}
  = ext λ z
  → #> (λ x → *> (|> (λ { eq → triv }) exfalso))
  * λ za → a # inl eq * za
@@ -494,9 +494,9 @@ uni-fam-int-uni
  : ∀ {x y}
  → (x ∩ (∐ y)) ≡ (∐ u ∈ y ∣ (x ∩ u))
 uni-fam-int-uni {x} {y}
- = ext λ z
  → *> (λ zx → #> λ w → *> λ wy zw → ∪ᶠ[] y (w # wy * zx * zw))
  * {!!}
+ = ?
 -}
 
 --------------------------------------------------
@@ -653,38 +653,15 @@ opair-eq-singl-singl {x} eq
    ⟨ ⟨ x ⟩ , ⟨ x , x ⟩ ⟩
    ∎
 
-opair-eq-comm
- : ∀ {x y}
- → [ x , y ] ≡ [ y , x ]
- → x ≡ y
-opair-eq-comm
- = ope> prj₁
-
-opair-arb-uni
- : ∀ {x y}
- → ∐ [ x , y ] ≡ ⟨ x , y ⟩
-opair-arb-uni
- = uni-adj-eq
-
-opair-arb-uni-double
- : ∀ {x y}
- → ∐ (∐ [ x , y ]) ≡ (x ∪ y)
-opair-arb-uni-double 
- = ∐ $≡ uni-adj-eq
-
 opair-arb-int
  : ∀ {x y}
  → ∏ [ x , y ] ≡ ⟨ x ⟩
 opair-arb-int {x}
  = ext λ z
- → *> (≡> uni-adj-eq
-      (|> (λ { eq → const (inl eq) })
-          (|> (λ zet f → inl (|> triv exfalso $ (f ⟨ x ⟩ (inl eq)))) exfalso)))
- * |> (λ { eq → ∪[] (inl (inl eq)) * λ v →
-   |> (λ { eq → inl eq })
-  (|> (λ { eq → inl eq })
-   exfalso)})
-   exfalso
+ → iff> int-prod-pair (*> const)
+ * |> (λ zex → (int-prod-pair ₁)
+      (inl zex * inl zex))
+      exfalso
 
 arb-int-double-opair
  : ∀ {x y}
@@ -699,10 +676,41 @@ arb-int-double-opair {x} {y}
    ∎
 
 π₁ : Ens → Ens
-π₁ x = ∏ (∐ x)
+π₁ x = ∐ (∏ x)
 
 π₂ : Ens → Ens
-π₂ x = ∐ (⟨ u ∈ ∐ x ∣ (∐ x ≠ ∏ x → u ∉ ∏ x) ⟩)
+π₂ x = ∐ (⟨ u ∈ ∐ x ∣ (u ∈ ∏ x → ∐ x ≡ ∏ x) ⟩)
+
+opair-first
+ : ∀ {x y}
+ → π₁ [ x , y ] ≡ x
+opair-first {x} {y}
+ = begin
+   ∐ (∏ [ x , y ])
+   ≡⟨ ∐ $≡ opair-arb-int ⟩
+   ∐ ⟨ x ⟩
+   ≡⟨ arb-uni-singl ⟩
+   x
+   ∎
+
+{- TODO
+opair-second
+ : ∀ {x y}
+ → π₂ [ x , y ] ≡ y
+opair-second {x} {y}
+ = ? 
+-}
+
+_×_ : Ens → Ens → Ens
+_×_ x y = ∐ u ∈ x ∣ ⟨ v ∈ y ↦ [ u , v ] ⟩
+
+{- TODO
+cart-prod-eqv
+ : ∀ {x y z}
+ → (z ∈ (x × y)) ↔ ∃ λ u → ∃ λ v → (z ≡ [ u , v ]) ∧ (u ∈ x) ∧ (u ∈ y)
+cart-prod-eqv {x} {y}
+ = ?
+-}
 
 --------------------------------------------------
 
