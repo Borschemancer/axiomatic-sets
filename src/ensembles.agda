@@ -315,13 +315,19 @@ arb-uni-in-sub {x} xy
  = λ z zx
  → x # xy * zx
 
-{- TODO
 ∐fam : (Ens → Ens) → Ens → Ens
-∐fam φ x = ⟨ u ∈ ∐ x ↦ φ u ⟩
+∐fam φ x = ∐ ⟨ u ∈ x ↦ φ u ⟩
 
 syntax ∐fam (λ x → body) a = ∐ x ∈ a ∣ body
--}
 
+{- TODO
+uni-fam-eqv
+ : ∀ {x z} {φ : Ens → Ens}
+ → (z ∈ ∐ u ∈ x ∣ φ u) ↔ (∃ λ u → (u ∈ x) ∧ (z ∈ (φ u)))
+uni-fam-eqv
+ = ?
+ -}
+ 
 --------------------------------------------------
 
 ∏ : Ens → Ens
@@ -460,6 +466,11 @@ arb-union-pair {x} {y}
  → iff> int-prod-pair triv
  * *> λ zx zy → (x # inl eq * zx)
    * λ v → |> (λ { eq → zx }) (|> (λ { eq → zy }) exfalso)
+
+∏fam : (Ens → Ens) → Ens → Ens
+∏fam φ x = ∏ ⟨ u ∈ x ↦ φ u ⟩
+
+syntax ∏fam (λ x → body) a = ∏ x ∈ a ∣ body
 
 --------------------------------------------------
 
