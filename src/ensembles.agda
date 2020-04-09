@@ -490,12 +490,20 @@ arb-union-pair {x} {y}
 syntax ∏fam (λ x → body) a = ∏ x ∈ a ∣ body
 
 {- TODO
+int-fam-eqv
+ : ∀ {x z} {φ : Ens → Ens}
+ → (∀ u → (u ∈ x) → (z ∈ (φ u))) ↔ (z ∈ ∏ u ∈ x ∣ φ u)
+int-fam-eqv
+ = ?
+-}
+
 uni-fam-int-uni
  : ∀ {x y}
  → (x ∩ (∐ y)) ≡ (∐ u ∈ y ∣ (x ∩ u))
 uni-fam-int-uni {x} {y}
- = ?
--}
+ = ext λ z
+ → *> (λ zx → #> λ w → *> λ wy zw → ∪ᶠ[] y (w # wy * zx * zw))
+ * ∪ᶠ> y (#> λ w → *> λ wy → *> λ zx zw → zx * w # wy * zw )
 
 --------------------------------------------------
 
@@ -612,6 +620,30 @@ power-empty-singl
  → (λ emp → inl (empty-eq emp))
  * |> (λ { eq _ → triv })
       exfalso
+
+power-sub
+ : ∀ {x y}
+ → (x ⊆ y) ↔ ((𝒫 x) ⊆ (𝒫 y))
+power-sub {x} 
+ = (λ xsy z px a az → xsy a (px a az))
+ * (λ pxspy z zx → pxspy x (λ _ → triv) z zx)
+
+power-uni
+ : ∀ {x y}
+ → ((𝒫 x) ∪ (𝒫 y)) ⊆ (𝒫 (x ∪ y))
+power-uni
+ = λ z
+ → ∪> (|> (λ zpx a az → ∪[] (inl (zpx a az)))
+          (λ zpy a az → ∪[] (inr (zpy a az))))
+
+power-int
+ : ∀ {x y}
+ → ((𝒫 x) ∩ (𝒫 y)) ⊆ (𝒫 (x ∩ y))
+power-int
+ = λ z
+ → *> λ zpx zpy
+    → λ a az
+    → zpx a az * zpy a az 
 
 --------------------------------------------------
 
