@@ -734,13 +734,32 @@ opair-second {x} {y}
 _×_ : Ens → Ens → Ens
 _×_ x y = ∐ u ∈ x ∣ ⟨ v ∈ y ↦ [ u , v ] ⟩
 
-{- TODO
 cart-prod-eqv
  : ∀ {x y z}
- → (z ∈ (x × y)) ↔ ∃ λ u → ∃ λ v → (z ≡ [ u , v ]) ∧ (u ∈ x) ∧ (u ∈ y)
+ → (∃ λ u → ∃ λ v → (z ≡ [ u , v ]) ∧ (u ∈ x) ∧ (v ∈ y)) ↔ (z ∈ (x × y))
 cart-prod-eqv {x} {y}
- = ?
--}
+ = (#> λ u → #> λ v →
+    *> λ e p → ⟨ v ∈ y ↦ [ u , v ] ⟩ # (u # (p ₁) * eq) * v # (p ₂) * e)
+ * #> (λ w → *>
+  (#> (λ u → *> λ { ux eq →
+   #> λ v → *> λ vy e → u # v # e * ux * vy })))
+
+cp> : ∀ x y {z}
+ → (∃ λ u → ∃ λ v → (z ≡ [ u , v ]) ∧ (u ∈ x) ∧ (v ∈ y)) from (z ∈ (x × y))
+cp> x y = iff> (cart-prod-eqv {x = x} {y = y})
+
+cp[]
+ : ∀ x y {z}
+ → (∃ λ u → ∃ λ v → (z ≡ [ u , v ]) ∧ (u ∈ x) ∧ (v ∈ y)) → (z ∈ (x × y))
+cp[] x y = (cart-prod-eqv {x = x} {y = y}) ₁
+
+cart-opair-eqv
+ : ∀ {x y u v}
+ → ([ u , v ] ∈ (x × y)) ↔ ((u ∈ x) ∧ (v ∈ y))
+cart-opair-eqv {x} {y} {u} {v}
+ = cp> x y (#> λ u′ → #> λ v′
+ → *> (ope> (*> λ { eq eq → triv })))
+ * λ p → cp[] x y (u # v # eq * p)
 
 --------------------------------------------------
 
