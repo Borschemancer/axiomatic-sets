@@ -728,7 +728,7 @@ opair-second
  : ∀ {x y}
  → π₂ [ x , y ] ≡ y
 opair-second {x} {y}
- = ? 
+ = ?
 -}
 
 _×_ : Ens → Ens → Ens
@@ -738,8 +738,8 @@ cart-prod-eqv
  : ∀ {x y z}
  → (∃ λ u → ∃ λ v → (z ≡ [ u , v ]) ∧ (u ∈ x) ∧ (v ∈ y)) ↔ (z ∈ (x × y))
 cart-prod-eqv {x} {y}
- = (#> λ u → #> λ v →
-    *> λ e p → ⟨ v ∈ y ↦ [ u , v ] ⟩ # (u # (p ₁) * eq) * v # (p ₂) * e)
+ = #> (λ u → #> λ v →
+   *> λ e p → ⟨ i ∈ y ↦ [ u , i ] ⟩ # (u # (p ₁) * eq) * v # (p ₂) * e)
  * #> (λ w → *>
   (#> (λ u → *> λ { ux eq →
    #> λ v → *> λ vy e → u # v # e * ux * vy })))
@@ -760,6 +760,35 @@ cart-opair-eqv {x} {y} {u} {v}
  = cp> x y (#> λ u′ → #> λ v′
  → *> (ope> (*> λ { eq eq → triv })))
  * λ p → cp[] x y (u # v # eq * p)
+
+--------------------------------------------------
+
+is-rel : Ens → Prop
+is-rel r = ∀ x → x ∈ r → ∃ λ u → ∃ λ v → x ≡ [ u , v ]
+
+r[]
+ : ∀ {x} u v
+ → x ≡ [ u , v ]
+ → ∃ λ u′ → ∃ λ v′ → x ≡ [ u′ , v′ ]
+r[] u v x = u # v # x
+
+_~_~_ : Ens → Ens → Ens → Prop
+_~_~_ x r y = [ x , y ] ∈ r 
+
+rel-empty
+ : is-rel ∅
+rel-empty
+ = λ _
+ → exfalso
+
+rel-sub
+ : ∀ {f g}
+ → g ⊆ f
+ → is-rel f
+ → is-rel g
+rel-sub gsf rf
+ = λ x xg
+ → rf x (gsf x xg)
 
 --------------------------------------------------
 
